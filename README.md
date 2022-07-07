@@ -4,7 +4,7 @@ S - curve or <b>7-segment</b> : a modification to the trapezoidal profile
 
 
 <p align="center">
-<img src="/img/s_profile.PNG" alt="Graph"
+<img src="/img/s_profile.png" alt="Graph"
 	title="Trajectory" width="200" height="230" />
 </p>
 
