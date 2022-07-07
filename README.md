@@ -50,3 +50,7 @@ $t_{4}=T-t_{3}$ $;\quad$ $t_{5}=T-t_{2}$ $;\quad$ $t_{6}=T-t_{1}$
 $a_{7}=a_{1}=j_{max}$ $;\quad$ $a_{5}=a_{3}=-j_{max}$ $;\quad$ $a_{6}=a_{2}=a_{4}=0$ $;\quad$ $b_{2}=-b_{6}=a_{max}$ $;\quad$ $b_{4}=0$ $;\quad$ $c_{4}=v_{max}$
 
 -We use continuity conditions and smoothness conditions at points to find the unknown coefficients: $(b_3,b_5,b_7c_2,c_3,c_5,c_6,c_7,d_2,d_3,d_4,d_5,d_6,d_7)$
+
+
+
+Reference: Engineering Educator Academy from Youtube. [Click here to watch the video]([https://link-url-here.org](https://www.youtube.com/watch?v=yi45PgCqucs&ab_channel=EngineeringEducatorAcademy))
