@@ -53,4 +53,4 @@ $a_{7}=a_{1}=j_{max}$ $;\quad$ $a_{5}=a_{3}=-j_{max}$ $;\quad$ $a_{6}=a_{2}=a_{4
 
 
 
-Reference: Engineering Educator Academy from Youtube. [Click here to watch the video]([https://www.youtube.com/watch?v=yi45PgCqucs&ab_channel=EngineeringEducatorAcademy])
+Reference: Engineering Educator Academy from Youtube. [Click here to watch the video](https://www.youtube.com/watch?v=yi45PgCqucs&ab_channel=EngineeringEducatorAcademy)
