@@ -5,7 +5,7 @@ S - curve or <b>7-segment</b> : a modification to the trapezoidal profile
 
 <p align="center">
 <img src="/s_profile.png" alt="Graph"
-	title="Trajectory" width="200" height="230" />
+	title="Trajectory" width="1100" height="500" />
 </p>
 
 We use  the following general forms for $q's$,$\dot{q}'s$,$\ddot{q}'s$and$ $\dddot{q}'s$: 
