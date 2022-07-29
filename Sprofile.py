@@ -16,17 +16,24 @@ import time
 t_inicial=time.time()
 sns.set_theme()
 
-jmax = 30
+jmax = 2
 
-vmax = 10
-vi = 7.5
-vf = 0
-amax = 10
+vmax = 0.4
+
+amax = 4
 
 
-qi=  0
-qf = 10
+qf = math.sqrt(3)
 
+if qf <= 0.5:
+    vmax=vmax/4
+
+
+aux = math.sqrt((vmax*jmax))
+   
+if aux <= amax: 
+    # print("i'm in")
+    amax = aux
 
 if (qf < 0):
        
@@ -34,99 +41,23 @@ if (qf < 0):
     vmax = -vmax
     jmax = -jmax
     
-Tjaux= min(math.sqrt(abs(vf-vi)/jmax),amax/jmax)
 
-
-if Tjaux<amax/jmax:
-    if qf-qi > Tjaux*(vi+vf):
-        print("the trajectory is feasible")
-    else:
-        print("the trajectory is NOT feasible")
-        
-elif Tjaux == amax/jmax:
-    if qf-qi > 0.5*(vi+vf)*(Tjaux+abs(vi+vf)/amax):
-        print("the trajectory is feasible")
-    else:
-        print("the trajectory is NOT feasible")
-
-#Phase 1: acceleration
-if (vmax-vi)*jmax < amax**2:
-    print("amax is NOT reached")
     
-    Tj1=math.sqrt(abs(vmax-vi)/jmax)
-    Ta=Tj1*2
+T = (amax/jmax)+(vmax/amax)+(qf/vmax)
+
+print(T)
+
+if  amax/jmax + vmax/amax < T/2:
+    t1= amax/jmax
+    t3 = t1 + vmax/amax
 else:
-    print("amax is reached")
-    Tj1=amax/jmax
-    Ta=Tj1+(vmax-vi)/amax
-    
-#Phase 3: Desacceleration
-amin = -amax
-if (vmax-vf)*jmax < amax**2:
-    print("amin is NOT reached")
-    
-    Tj2=math.sqrt(abs(vmax-vf)/jmax)
-    Td=Tj2*2
-else:
-    print("amin is reached")
-    Tj2=amax/jmax
-    Td=Tj2+(vmax-vf)/amax
+    print("Error en paramatros!")
+    sys.exit()
 
-
-Tv=(qf-qi)/vmax - Ta/2*(1+vi/vmax)-Td/2*(1+vf/vmax)
-
-if Tv>0:
-    print("the max velocity is reached")
-else:
-    print("CASE 2")
-    print("In this case vmax is NOT reached, so Tv=0")
-    Tj1=amax/jmax
-    Tj2=Tj1
-    Tj=Tj1
-    delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf))
-    Ta=((pow(amax,2)/jmax)-2*vi+math.sqrt(delta))/(2*amax)
-    Td=((pow(amax,2)/jmax)-2*vf+math.sqrt(delta))/(2*amax)
-    Tv=0
-    i=0
-    
-    if Ta<2*Tj or Td<2*Tj:
-        print("entre")
-        while not(Ta>2*Tj and Td>2*Tj):
-            amax=amax*0.99
-            Tj=amax/jmax
-            delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf))
-            Ta=((pow(amax,2)/jmax)-2*vi+math.sqrt(delta))/(2*amax)
-            Td=((pow(amax,2)/jmax)-2*vf+math.sqrt(delta))/(2*amax)
-            
-            print(f'{i}',amax)
-            i+=1
- 
-            if Ta<0:
-                Ta=0
-                Tj1=0
-                Td=2*((qf-qi)/(vf+vi))
-                Tj2=(jmax*(qf-qi)-math.sqrt(jmax*(jmax*(pow(qf-qi,2))+ pow(vf+vi,2)*(vf-vi))))/(jmax*(vf+vi))
-                break
-        
-
-#%%
-print(amax)
-print(Ta)
-print(Td)
-print(Tv)
-print(Tj1)
-print(Tj2)
-
-t1=Tj1
-T=Ta+Td+Tv
-
-t3=Ta
 t2=t3-t1
-
-t4=T-Td
-
-t5=t4+Tj2
-t6=t5+Tj2
+t4=T-t3
+t5=T-t2
+t6=T-t1
 
 a1=jmax
 a2=0
@@ -245,7 +176,7 @@ j=np.concatenate((j1[ind1],j2[ind2],j3[ind3],j4[ind4],j5[ind5],j6[ind6],j7[ind7]
 
 t_final=time.time()
 
-# print("Total time of the program:",t_final-t_inicial)
+print("Total time of the program:",t_final-t_inicial)
 
 
 fig, axs = plt.subplots(4)
