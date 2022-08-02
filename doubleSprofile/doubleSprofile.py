@@ -20,21 +20,35 @@ jmax = 1
 jmin = -jmax
 
 vmax = 0.4  #m/s
+vmin = -vmax
 vi = 0
-vf = 0.4
+vf = 0.1
 amax = 4    
- 
+amin = -amax 
 
-qi=  0
-qf = 3  #m
+qi=  1
+qf = -3  #m
 
+inv= False
 
-if (qf < 0):
-       
-    amax = -amax
-    vmax = -vmax
-    jmax = -jmax
+if (qf < qi):
     
+    inv = True
+    
+    print("Inversion de valores!")
+    
+    qi = -qi
+    qf = -qf
+    vi = -vi
+    vf = -vf
+    
+    vmax = -vmin
+    vmin = -vmax
+    amax = -amin 
+    amin = -amax
+    jmax = -jmin
+    jmin = -jmax
+
 Tjaux= min(math.sqrt(abs(vf-vi)/jmax),amax/jmax)
 
 
@@ -62,7 +76,7 @@ else:
     Ta=Tj1+(vmax-vi)/amax
     
 #Phase 3: Desacceleration
-amin = -amax
+
 if (vmax-vf)*jmax < amax**2:
     print("amin is NOT reached")
     
@@ -231,6 +245,12 @@ q=np.concatenate((q1[ind1],q2[ind2],q3[ind3],q4[ind4],q5[ind5],q6[ind6],q7[ind7]
 qd=np.concatenate((qd1[ind1],qd2[ind2],qd3[ind3],qd4[ind4],qd5[ind5],qd6[ind6],qd7[ind7]))
 qdd=np.concatenate((qdd1[ind1],qdd2[ind2],qdd3[ind3],qdd4[ind4],qdd5[ind5],qdd6[ind6],qdd7[ind7]))
 qddd=np.concatenate((qddd1[ind1],qddd2[ind2],qddd3[ind3],qddd4[ind4],qddd5[ind5],qddd6[ind6],qddd7[ind7]))
+
+if inv:
+    q=-q
+    qd=-qd
+    qdd=-qdd
+    qddd=-qddd
 
 fig, axs = plt.subplots(4)
 
