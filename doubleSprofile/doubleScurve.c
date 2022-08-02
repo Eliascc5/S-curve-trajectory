@@ -6,22 +6,31 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
+
+typedef int bool;
+#define true 1
+#define false 0
+
 float jmax = 1;
 float jmin;
 
 float vmax = 0.4;
+float vmin;
+
 float vi = 0;
 float vf = 0.4;
+
 float amax = 4; 
 float amin;
  
- float T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
+float T,Ta,Td,Tv,Tj1,Tj2,Tj,delta;
 
-float qi = 0;
-float qf = 3;
+float qi = 1;
+float qf = 5;
 
 float q,qd,qdd,qddd;
 
+bool flagInv = false;
 
 float alima;
 float alimd;
@@ -29,65 +38,123 @@ float vlim; // = vf-(Td-Tj2)*alimd;
 
 
 
-
 void get_Straj(float t){
+
+    if (qf < qi){
+
+    flagInv = true;
+
+    qi = -qi;
+    qf = -qf;
+    vi = -vi;
+    vf = -vf;
+    
+    vmax = -vmin;
+    vmin = -vmax;
+    amax = -amin;
+    amin = -amax;
+    jmax = -jmin;
+    jmin = -jmax;
+
+    alima = jmax*Tj1;
+    alimd = -jmax*Tj2;
+    vlim = vi+(Ta-Tj1)*alima; 
+    
+    }else{
+        jmin = -jmax;
+        amin = -amax;
+        vmin = -vmax;
+
+        alima = jmax*Tj1;
+        alimd = -jmax*Tj2;
+        vlim = vi+(Ta-Tj1)*alima; 
+
+    }
+   
 
     //#Acceleration phase
 
     if (t>=0 & t<=Tj1){               //a) [0,Tj1]
-        
+        printf("tramo1\n");
         q = qi+vi*t+jmax*pow(t,3)/6;
         qd = vi+jmax*pow(t,2)/2;
         qdd = jmax*t;
         qddd = jmax;
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
 
     } else if (t>Tj1 & t<=Ta-Tj1){   //b) [Tj1,Ta-Tj1]
-
+        printf("tramo2\n");
         q = qi+vi*t+(alima/6)*(3*pow(t,2)-3*Tj1*t+pow(Tj1,2));
         qd = vi+amax*(t-Tj1/2);
         qdd = jmax*Tj1;
         qddd = 0;
 
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
+
     } else if (t>Ta-Tj1 & t<=Ta){    //c) [Ta-Tj1,Ta]
-        
+        printf("tramo3\n");
         q = qi+(vlim+vi)*Ta/2-vlim*(Ta-t)-jmin*pow(Ta-t,3)/6;
         qd = vmax+jmin*pow(Ta-t,2)/2;
         qdd = -jmin*(Ta-t);
         qddd = jmin;
-
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
     }
 
     /*-------------Constant phase ----------------*/
     else if (t>Ta & t<=Ta+Tv){
-
+        printf("tramo4\n");
         q = qi+(vlim+vi)*Ta/2+vlim*(t-Ta);
         qd = vmax;
         qdd = 0;
         qddd = 0;
-
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
     }
     /*-------------Dese phase ----------------*/
 
     else if (t>=T-Td & t<=T-Td+Tj2){
+        printf("tramo5\n");
         q=qf-(vlim+vf)*Td/2+vlim*(t-T+Td)-jmax*(pow(t-T+Td,3)/6);
         qd=vlim-jmax*(pow(t-T+Td,2)/2);
         qdd=-jmax*(t-T+Td);
         qddd=jmin;
-
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
     } else if (t>T-Td+Tj2 & t<=T-Tj2){
+        printf("tramo6\n");
         q=qf-(vlim+vf)*Td/2+vlim*(t-T+Td)+(alimd/6)*(3*pow(t-T+Td,2)-3*Tj2*(t-T+Td)+pow(Tj2,2));
         qd=vlim+alimd*(t-T+Td-Tj2/2);
         qdd = -jmax*Tj2;
         qddd = 0;
-
+        if (flagInv){
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
 
     } else if (t>T-Tj2 & t<=T){
-
+        printf("tramo7\n");
         q = qf-vf*(T-t)-jmax*(pow(T-t,3)/6);
         qd = vf+jmax*(pow(T-t,2))/2;
         qdd = -jmax*(T-t);
         qddd = jmax;
-
+        if (flagInv){
+            printf("inv tramo7\n");
+            q=-q; qd=-qd; qdd=-qdd; qddd=-qddd;
+            flagInv = false;
+        }
     }
 
     printf("Este es el final\n");
@@ -99,12 +166,24 @@ void update_ScurveTraj(float qf ,float qi, float vi,float vf ,float vmax,float a
 
 jmin = -jmax;
 amin = -amax;
+vmin = -vmax;
 
-if (qf < 0){
-       
-    amax = -amax;
-    vmax = -vmax;
-    jmax = -jmax;
+if (qf < qi){
+
+    flagInv = true;
+
+    qi = -qi;
+    qf = -qf;
+    vi = -vi;
+    vf = -vf;
+    
+    vmax = -vmin;
+    vmin = -vmax;
+    amax = -amin;
+    amin = -amax;
+    jmax = -jmin;
+    jmin = -jmax;
+    
 }
     
 volatile float Tjaux = MIN(sqrt(fabs(vf-vi)/jmax),amax/jmax);
@@ -115,7 +194,7 @@ if (Tjaux<amax/jmax){
     else {printf("the trajectory is NOT \n");}      
 }        
 else if (Tjaux == amax/jmax){
-    if (qf-qi > 0.5*(vi+vf)*(Tjaux+abs(vi+vf)/amax)) {printf("the trajectory is feasible\n");}       
+    if (qf-qi > 0.5*(vi+vf)*(Tjaux+fabs(vi+vf)/amax)) {printf("the trajectory is feasible\n");}       
     else {printf("the trajectory is NOT feasible\n");}      
 }
 //Phase 1: acceleration
@@ -203,20 +282,18 @@ int main (void){
 
 update_ScurveTraj(qf,qi, vi,vf,vmax,amax, jmax);
 
-alima=jmax*Tj1;
-alimd=-jmax*Tj2;
-vlim = vi+(Ta-Tj1)*alima; 
+
 
 T=Ta+Td+Tv;
 
-printf("Ta: %f\n",Ta);
-printf("Tj1: %f\n",Tj1);
-printf("Tj2: %f\n",Tj2);
-printf("Tv: %f\n",Tv);
-printf("Td: %f\n",Td);
-printf("T: %f\n",T);
+// printf("Ta: %f\n",Ta);
+// printf("Tj1: %f\n",Tj1);
+// printf("Tj2: %f\n",Tj2);
+// printf("Tv: %f\n",Tv);
+// printf("Td: %f\n",Td);
+// printf("T: %f\n",T);
 
-get_Straj(5.668080);
+get_Straj(9.98806);
 
 printf("q,qd,qdd:  %f,%f,%f",q,qd,qdd);
 
