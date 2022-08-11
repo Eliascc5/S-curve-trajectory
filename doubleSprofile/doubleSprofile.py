@@ -19,15 +19,15 @@ sns.set_theme()
 jmax = 1
 jmin = -jmax
 
-vmax = 0.4  #m/s
+vmax = 1  #m/s
 vmin = -vmax
 vi = 0
-vf = 0.1
-amax = 4    
+vf = 0 
+amax = 4
 amin = -amax 
 
-qi=  1
-qf = -3  #m
+qi=  5
+qf = -0.001  #m
 
 inv= False
 
@@ -52,7 +52,7 @@ if (qf < qi):
 Tjaux= min(math.sqrt(abs(vf-vi)/jmax),amax/jmax)
 
 
-if Tjaux<amax/jmax:
+if Tjaux < amax/jmax:
     if qf-qi > Tjaux*(vi+vf):
         print("the trajectory is feasible")
     else:
@@ -65,7 +65,7 @@ elif Tjaux == amax/jmax:
         print("the trajectory is NOT feasible")
 
 #Phase 1: acceleration
-if (vmax-vi)*jmax < amax**2:
+if (vmax-vi)*jmax < pow(amax,2):
     print("amax is NOT reached")
     
     Tj1=math.sqrt(abs(vmax-vi)/jmax)
@@ -77,7 +77,7 @@ else:
     
 #Phase 3: Desacceleration
 
-if (vmax-vf)*jmax < amax**2:
+if (vmax-vf)*jmax < pow(amax,2):
     print("amin is NOT reached")
     
     Tj2=math.sqrt(abs(vmax-vf)/jmax)
@@ -110,6 +110,8 @@ else:
             
             amax=amax*0.99
             Tj=amax/jmax
+            Tj1=Tj
+            Tj2=Tj
             delta = (pow(amax,4)/pow(jmax,2))+2*(pow(vi,2)+pow(vf,2))+amax*(4*(qf-qi)-2*(amax/jmax)*(vi+vf))
             Ta=((pow(amax,2)/jmax)-2*vi+math.sqrt(delta))/(2*amax)
             Td=((pow(amax,2)/jmax)-2*vf+math.sqrt(delta))/(2*amax)
@@ -204,20 +206,20 @@ qddd1=jmax*np.ones((len(t)))
 #b) [Tj1,Ta-Tj1]
 
 q2=qi+vi*t+(alima/6)*(3*pow(t,2)-3*Tj1*t+pow(Tj1,2))
-qd2=vi+amax*(t-Tj1/2)
+qd2=vi+alima*(t-Tj1/2)
 qdd2=jmax*Tj1*np.ones((len(t)))
 qddd2=0*np.ones((len(t)))
 
 #c) [Ta-Tj1,Ta]
 
 q3=qi+(vlim+vi)*Ta/2-vlim*(Ta-t)-jmin*pow(Ta-t,3)/6
-qd3=vmax+jmin*pow(Ta-t,2)/2
+qd3=vlim+jmin*pow(Ta-t,2)/2
 qdd3=-jmin*(Ta-t)
 qddd3=jmin*np.ones((len(t)))
 ###############################################
 #Constant
 q4=qi+(vlim+vi)*Ta/2+vlim*(t-Ta)
-qd4=vmax*np.ones((len(t)))
+qd4=vlim*np.ones((len(t)))
 qdd4=0*np.zeros((len(t)))
 qddd4=0*np.ones((len(t)))
 
@@ -235,6 +237,7 @@ qdd6=-jmax*Tj2*np.ones((len(t)))
 qddd6=0*np.ones((len(t)))
 
 q7=qf-vf*(T-t)-jmax*(pow(T-t,3)/6)
+# print("Valores en tramo 7:", qf,vf,T,jmax)
 qd7=vf+jmax*(pow(T-t,2))/2
 qdd7=-jmax*(T-t)
 qddd7=jmax*np.ones((len(t)))
